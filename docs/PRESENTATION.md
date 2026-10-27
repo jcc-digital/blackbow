@@ -10,7 +10,7 @@ Gift buyers know the person but may not know the product. A guided concierge tur
 - **Build your own:** choose the details, see a transparent total and add a custom box to a demo bag.
 - **Gift for a team:** plan quantities, budgets and one or multiple destinations; create a brief for a future human-assisted quote.
 
-Demo sequence: complete a birthday finder, inspect a match, add it to the bag; create a mug-and-tea box ($48 mock CAD); create a 40-person, $75-per-person brief ($3,000 before tax/shipping).
+Demo sequence: complete a birthday finder and inspect a match; create a mug-and-tea box ($48 mock CAD) and add it to the bag. Choose fictional delivery, simulate unavailability to block the handoff, then resolve it and inspect the mock order/packing JSON. A corporate example is 40 people at $75 each ($3,000 before tax/shipping). See PART-3-WALKTHROUGH.md.
 
 ## 3. Thoughtful rules today. Grounded AI tomorrow.
 

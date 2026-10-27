@@ -27,8 +27,10 @@ import { GiftMatches } from "./GiftMatches";
 import { BoxBuilder } from "./BoxBuilder";
 import { CorporatePlanner } from "./CorporatePlanner";
 import { GiftArt } from "./GiftArt";
+import { OrderHandoff } from "./OrderHandoff";
+import type { BagItem, GiftSelection } from "@/lib/orders";
 type Path = "finder" | "builder" | "corporate";
-type BagItem = { key: string; name: string; price: number; quantity: number };
+
 export default function Concierge() {
   const [path, setPath] = useState<Path>("finder");
   const [profile, setProfile] = useState<Profile>(defaultProfile);
@@ -64,14 +66,19 @@ export default function Concierge() {
       block: "start",
     });
   }
-  function add(name: string, price: number, key: string) {
+  function add(
+    name: string,
+    price: number,
+    key: string,
+    selection: GiftSelection,
+  ) {
     setBag((prev) => {
       const found = prev.find((i) => i.key === key);
       return found
         ? prev.map((i) =>
             i.key === key ? { ...i, quantity: i.quantity + 1 } : i,
           )
-        : [...prev, { key, name, price, quantity: 1 }];
+        : [...prev, { key, name, price, quantity: 1, selection }];
     });
     setNotice(`${name} added to your demo bag.`);
     setSelected(null);
@@ -392,7 +399,20 @@ export default function Concierge() {
               </p>
               <button
                 className="button primary full"
-                onClick={() => add(selected.name, selected.price, selected.id)}
+                onClick={() =>
+                  add(
+                    selected.name,
+                    selected.price,
+                    `${selected.id}-${profile.recipient}-${profile.occasion}-${profile.budget}`,
+                    {
+                      kind: "ready-made",
+                      productId: selected.id,
+                      recipient: profile.recipient,
+                      occasion: profile.occasion,
+                      budget: profile.budget,
+                    },
+                  )
+                }
               >
                 Add to demo bag <ShoppingBag size={17} />
               </button>
@@ -458,11 +478,7 @@ export default function Concierge() {
                   <strong>Demo subtotal</strong>
                   <strong>{money(bagTotal)} CAD</strong>
                 </div>
-                <div className="demo-note">
-                  This is the end of the demo journey. No payment or order is
-                  created. A production version would open Shopify’s secure
-                  checkout with verified variants.
-                </div>
+                <OrderHandoff bag={bag} />
                 <button className="button primary full" onClick={close}>
                   Keep exploring <ArrowRight size={16} />
                 </button>

@@ -15,12 +15,15 @@ flowchart LR
   Rules --> Matches
   Matches --> Bag[Demo bag]
   Builder --> Bag
+  Bag --> Validate[orders.ts: validate configuration, price, budget, delivery, simulated stock]
+  Validate --> Order[In-memory mock order snapshot]
+  Order --> Packing[Mock fulfillment packing list / JSON download]
   Corporate --> Brief[Local planning estimate]
 ```
 
 `app/page.tsx` renders the client concierge. `Concierge` owns the finder profile, pathway, native modal dialog and bag. Each pathway is a separate component. `GiftArt` draws original vector compositions. `catalog.ts` defines typed products, profiles, preferences and CAD formatting. `recommendations.ts` is a pure domain function, independent of React, Next.js and Shopify. The app can prerender as a static page; no server-side customer data processing occurs.
 
-Finder state and bag persist only within the mounted page. Builder and corporate drafts reset when leaving those pathways. Bag keys merge identical ready-made products and custom boxes with the same item composition. Notes are deliberately not carried into the bag. Prices exclude tax and shipping. Corporate recipient count is constrained by HTML form validation to 5–1,000. Multiple-address delivery is a planning selection, not an implemented fulfillment service.
+Finder state and bag persist only within the mounted page. Builder and corporate drafts reset when leaving those pathways. Bag keys merge ready-made products only when recipient/occasion/budget context also matches; custom boxes merge by item composition. Notes are deliberately not carried into the bag. Prices exclude tax and shipping. Corporate recipient count is constrained by HTML form validation to 5–1,000. Multiple-address delivery is a planning selection, not an implemented fulfillment service.
 
 ### Rules, explicitly
 
@@ -74,3 +77,7 @@ The UI includes semantic headings, native button controls, pressed-state choices
 ## Known boundaries
 
 Public storefront direction reviewed (see RESEARCH.md); mock catalog, no fulfillment, no real checkout, no quote submission and no AI backend. The next implementation step is merchant-approved catalog/brand mapping in a Shopify development store, then a small instrumented pilot. The application has no connection to the production Shopify store. Development research read public pages only; no authenticated Shopify API/admin access occurred.
+
+## Part 3 mock handoff
+
+`GiftSelection` carries ready-made product/context or custom component IDs into `BagItem`. `createMockOrder` in `lib/orders.ts` rejects missing delivery, simulated stock unavailability, invalid quantities/configurations/prices and over-budget ready-made selections. Successful output uses integer cents and contains a copied selection snapshot and packing contents per gift. `OrderHandoff` displays/errors/exports this local record; its fingerprint invalidates snapshots after any bag, delivery or simulation change. Closing the bag resets the handoff state. Nothing reaches a service, reserves inventory, collects payment or dispatches fulfillment. See PART-3-WALKTHROUGH.md for a worked example.

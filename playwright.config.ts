@@ -1,5 +1,16 @@
 import { existsSync } from "node:fs";
 import { defineConfig } from "@playwright/test";
+// Cloud proxies must not intercept the local server readiness probe.
+const localBypass = [
+  process.env.NO_PROXY,
+  process.env.no_proxy,
+  "127.0.0.1",
+  "localhost",
+]
+  .filter(Boolean)
+  .join(",");
+process.env.NO_PROXY = localBypass;
+process.env.no_proxy = localBypass;
 export default defineConfig({
   testDir: "./tests/browser",
   fullyParallel: true,

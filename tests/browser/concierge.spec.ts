@@ -130,3 +130,97 @@ test("accessibility scans of all pathways, dialog and presentation", async ({
   await page.goto("/presentation");
   await scan();
 });
+test("Part 3: missing delivery and unavailable gift block the handoff; configured contents reach the mock record", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("tab", { name: /Build your own/ }).click();
+  await page.getByRole("button", { name: /Stoneware mug/ }).click();
+  await page.getByRole("button", { name: /Herbal tea/ }).click();
+  await page
+    .getByRole("button", { name: "Add to demo bag", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Open demo bag, 1 items/ }).click();
+  await page
+    .getByRole("button", { name: "Validate & create mock order" })
+    .click();
+  await expect(page.locator(".order-handoff").getByRole("alert")).toContainText(
+    "Choose a demo delivery method",
+  );
+  await expect(page.locator(".mock-record")).toHaveCount(0);
+  await page.getByLabel("Demo delivery method").selectOption("demo-pickup");
+  await page.getByLabel("Simulate first gift becoming unavailable").check();
+  await page
+    .getByRole("button", { name: "Validate & create mock order" })
+    .click();
+  await expect(page.locator(".order-handoff").getByRole("alert")).toContainText(
+    "unavailable",
+  );
+  await expect(page.locator(".mock-record")).toHaveCount(0);
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.getByLabel("Simulate first gift becoming unavailable").uncheck();
+  await page
+    .getByRole("button", { name: "Validate & create mock order" })
+    .click();
+  await expect(page.locator(".mock-record")).toContainText("$48 CAD");
+  await expect(page.locator(".mock-record")).toContainText(
+    "Stoneware mug, Herbal tea",
+  );
+  await page.getByText("Inspect cart → order → fulfillment data").click();
+  const record = JSON.parse(await page.locator(".mock-record pre").innerText());
+  expect(record.lines[0].selection.componentIds).toEqual(["mug", "tea"]);
+  expect(record.subtotalCents).toBe(4800);
+  expect(record.fulfillment.status).toBe("simulation-only-not-dispatched");
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  const downloadEvent = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Download mock record JSON" }).click();
+  expect((await downloadEvent).suggestedFilename()).toMatch(/^DEMO-.*\.json$/);
+  await page.getByRole("button", { name: /Increase .* quantity/ }).click();
+  await expect(page.locator(".mock-record")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Validate & create mock order" })
+    .click();
+  await expect(page.locator(".mock-record")).toContainText("$96 CAD");
+  await expect(page.locator(".mock-record")).toContainText(
+    "2 × Your custom gift box",
+  );
+});
+test("Part 3: ready-made recipient and occasion survive the cart handoff", async ({
+  page,
+}) => {
+  await page.goto("/");
+  for (let i = 0; i < 4; i++)
+    await page.getByRole("button", { name: "Next step" }).click();
+  await page.getByRole("button", { name: "See my gift matches" }).click();
+  await page.getByRole("button", { name: "Explore this gift" }).first().click();
+  await page
+    .getByRole("button", { name: "Add to demo bag", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Open demo bag, 1 items/ }).click();
+  await page.getByLabel("Demo delivery method").selectOption("demo-shipping");
+  await page
+    .getByRole("button", { name: "Validate & create mock order" })
+    .click();
+  await page.getByText("Inspect cart → order → fulfillment data").click();
+  const record = JSON.parse(await page.locator(".mock-record pre").innerText());
+  expect(record.lines[0].selection).toMatchObject({
+    kind: "ready-made",
+    recipient: "A friend",
+    occasion: "Birthday",
+    budget: 100,
+  });
+  expect(record.fulfillment.destination).toContain("fictional");
+});

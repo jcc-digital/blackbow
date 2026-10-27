@@ -25,7 +25,7 @@ No environment variables, Shopify credentials, database or third-party service a
 1. **Find a gift:** choose recipient, occasion, budget, interests and preferences. Review up to three explained matches, open a gift, then add it to the demo bag. A $50 budget demonstrates the honest no-match state.
 2. **Build your own:** select items, watch the box total update (including the $12 mock box), and add it to the demo bag. The optional note is not submitted or retained in the bag. Builder selections do not inherit finder preferences.
 3. **Gift for a team:** enter 5–1,000 recipients, a per-person budget and one or multiple destinations. Generate a local planning brief, not a quote or request.
-4. Open the bag, change quantities and remove gifts. The journey ends with a transparent demo summary; no checkout is simulated as a real order.
+4. Open the bag, choose a fictional delivery method, then **Validate & create mock order**. Inspect or download the order/fulfillment JSON. Try the unavailable-gift toggle or missing delivery to demonstrate blocked validation. No real checkout, payment, reservation or dispatch occurs.
 5. Read the six-slide presentation at `/presentation`, or [the presentation source](docs/PRESENTATION.md). A [six-page PDF](docs/blackbow-concept.pdf) is included for sharing.
 
 Finder answers and the demo bag exist only in React memory and disappear on reload. Switching pathways resets the unsubmitted builder/corporate form. The recipient field provides context in results; it does not change scoring or infer demographics. Finder exclusion labels are illustrative; they are not ingredient or allergy-safety guarantees.
@@ -47,6 +47,10 @@ Reviewed the public homepage, story, design-your-own and corporate pages on Octo
 
 [Research notes and dated sources](docs/RESEARCH.md) explain the observations and their design implications. The typographic wordmark, copy and SVG artwork are original interpretations, not official approved assets. No logo files, photography, testimonials, product descriptions or theme code were copied. Catalog, prices, inventory, allergies and fulfillment remain unverified mock data despite public storefront access. Obtain merchant-approved assets and structured catalog data before production.
 
+## Part 3 assignment demonstration
+
+[Part 3 walkthrough and submission explanation](docs/PART-3-WALKTHROUGH.md) demonstrates selection/configuration → mock cart → validated order → packing list, including unavailable gifts, missing delivery and stale-record invalidation. Records are in memory and reset when the bag closes. JSON downloads create local files only.
+
 ## Deliverables
 
 - [Architecture and Shopify integration](docs/ARCHITECTURE.md)
@@ -59,4 +63,4 @@ Only public storefront research was performed. No authenticated Shopify API/admi
 
 ## Validated in the prepared cloud machine
 
-Frozen-lockfile installation, production build, TypeScript checks, all 5 rule-engine tests and all 10 desktop/mobile browser tests passed. Accessibility scans covered the finder, results, product dialog, builder, corporate planner and presentation. A 320px viewport had no horizontal overflow, and the final browser session reported no runtime errors. The presentation PDF contains six pages.
+Frozen-lockfile installation, production build, TypeScript checks, all 10 recommendation/order unit tests and all 14 desktop/mobile browser tests passed. Accessibility scans covered the finder, results, product dialog, builder, corporate planner and presentation. A 320px viewport had no horizontal overflow, and the final browser session reported no runtime errors. The presentation PDF contains six pages.

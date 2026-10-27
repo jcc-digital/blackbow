@@ -16,10 +16,10 @@ const slides = [
   {
     tag: "THE EXPERIENCE",
     title: "Three ways to say “I thought of you.”",
-    body: "A mobile-first journey that makes space for different gifting needs.",
+    body: "A mobile-first journey from gift selection to a validated mock order and packing record.",
     points: [
       "Find a gift: five steps, explained matches, honest constraints.",
-      "Build your own: personal details and transparent totals.",
+      "Build your own: components and quantities pass into inspectable mock order/fulfillment JSON.",
       "Gift for a team: a practical brief for a future assisted quote.",
     ],
   },
@@ -30,7 +30,7 @@ const slides = [
     points: [
       "Budget and preferences are hard filters. Interest and occasion tags rank eligible gifts.",
       "An LLM could interpret intent or explain verified catalog matches.",
-      "Validate IDs, prices and constraints. Keep a rule-based fallback.",
+      "Simulate an unavailable gift or missing delivery: block creation, explain the fix, then retry.",
     ],
   },
   {

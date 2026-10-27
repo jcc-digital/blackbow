@@ -13,12 +13,18 @@ import {
 } from "lucide-react";
 import { boxItems, money } from "@/lib/catalog";
 import { GiftArt } from "./GiftArt";
+import type { GiftSelection } from "@/lib/orders";
 export function BoxBuilder({
   heading,
   add,
 }: {
   heading: RefObject<HTMLHeadingElement | null>;
-  add: (name: string, price: number, key: string) => void;
+  add: (
+    name: string,
+    price: number,
+    key: string,
+    selection: GiftSelection,
+  ) => void;
 }) {
   const [items, setItems] = useState<string[]>([]);
   const [card, setCard] = useState("");
@@ -131,6 +137,7 @@ export function BoxBuilder({
               "Your custom gift box",
               total,
               `custom-${[...items].sort().join("-")}`,
+              { kind: "custom", componentIds: [...items] },
             )
           }
         >
